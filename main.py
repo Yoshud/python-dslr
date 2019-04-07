@@ -1,27 +1,17 @@
-import cv2
-import gphoto2 as gp
+from init_methods import *
 
-context = gp.gp_context_new()
-error, file = gp.gp_file_new()
-error, camera = gp.gp_camera_new()
-error = gp.gp_camera_init(camera, context)
-error, text = gp.gp_camera_get_summary(camera, context)
-error, file = gp.gp_camera_capture_preview(camera, context)
-gp.gp_file_save(file, "photo.jpg")
-print('Summary')
-print('=======')
-print(text.text)
-print(gp.gp_result_as_string(error))
+camera, context = init()
+last_frame = capture_photo(camera, context)
 
-print("start")
 try:
     for i in range(300):
-        error, file = gp.gp_camera_capture_preview(camera, context)
-        print(gp.gp_result_as_string(error))
-        gp.gp_file_save(file, "photo.jpg")
-        photo = cv2.imread("photo.jpg")
+        photo = capture_photo(camera, context)
         # # photo = cv2.flip(photo, 1)
-        cv2.imshow("adam", photo)
+        cv2.imshow("adam", (255 - last_frame) - (255 - photo))
+        # cv2.imshow("adam", (255 - last_frame))
+
+        last_frame = photo
+
         if cv2.waitKey(10) & 0xFF == ord('q'):
             break
 
