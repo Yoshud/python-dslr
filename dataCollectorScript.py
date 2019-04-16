@@ -13,17 +13,16 @@ else:
     directoryName = f"recording_{datetime.datetime.now()}"
 os.mkdir(directoryName)
 
-last_frame = to_gray(capture_frame(camera, context))
+last_frame_raw = capture_frame(camera, context)
+last_frame = to_gray(last_frame_raw)
+last_detection = -1
 
+savedCount = 0
 i = 0
 try:
     while 1:
         frame = capture_frame(camera, context)
         detection, gray, to_print_frame = move_detection(last_frame, frame)
-
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        cv2.imwrite(f"{directoryName}/frame_{i}.png", frame)
-        cv2.putText(to_print_frame, f"frame_{i}", (50, 650), font, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
 
         if detection == 0:
             text = "No move"
@@ -34,7 +33,17 @@ try:
         else:
             text = "Undefined error"
 
-        cv2.putText(to_print_frame, text, (50, 620), font, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
+        if last_detection == 1 or detection == 1:
+            cv2.imwrite(f"{directoryName}/frame_{i}.png", frame)
+            savedCount += 1
+        if last_detection == 0 and detection == 1:
+            cv2.imwrite(f"{directoryName}/frame_{i-1}.png", last_frame)
+            savedCount += 1
+
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        cv2.putText(to_print_frame, f"frame_{i}", (50, 650), font, 1.0, (0, 0, 255), 1, cv2.LINE_AA)
+        cv2.putText(to_print_frame, f"saved: {savedCount}", (500, 650), font, 1.0, (0, 0, 255), 1, cv2.LINE_AA)
+        cv2.putText(to_print_frame, text, (50, 620), font, 1.0, (0, 0, 255), 1, cv2.LINE_AA)
         cv2.imshow(f"frame", to_print_frame)
 
         if cv2.waitKey(10) & 0xFF in [27, ord('q')]:
@@ -42,6 +51,8 @@ try:
 
         i += 1
         last_frame = gray
+        last_frame_raw = frame
+        last_detection = detection
 
 finally:
     print("stop")
