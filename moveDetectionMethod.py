@@ -40,7 +40,7 @@ def move_detection(gray_last_frame, actual_frame):
         detection = 1
         cnts_count += 1
 
-    if cnts_count > 10 or too_big_count:
+    if cnts_count > 9 or too_big_count:
         detection = 2
 
     return detection, gray, frame_to_print

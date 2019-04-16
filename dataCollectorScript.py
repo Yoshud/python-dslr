@@ -16,6 +16,7 @@ os.mkdir(directoryName)
 last_frame_raw = capture_frame(camera, context)
 last_frame = to_gray(last_frame_raw)
 last_detection = -1
+cameraMovedBreakCounter = 0
 
 savedCount = 0
 i = 0
@@ -33,16 +34,22 @@ try:
         else:
             text = "Undefined error"
 
-        if last_detection == 1 or detection == 1:
-            cv2.imwrite(f"{directoryName}/frame_{i}.png", frame)
-            savedCount += 1
-        if last_detection == 0 and detection == 1:
-            cv2.imwrite(f"{directoryName}/frame_{i-1}.png", last_frame)
-            savedCount += 1
+        if cameraMovedBreakCounter == 0:
+            if last_detection == 1 or detection == 1:
+                cv2.imwrite(f"{directoryName}/frame_{i}.png", frame)
+                savedCount += 1
+            if last_detection == 0 and detection == 1:
+                cv2.imwrite(f"{directoryName}/frame_{i-1}.png", last_frame_raw)
+                savedCount += 1
+        else:
+            cameraMovedBreakCounter -= 1
+
+        if detection == 2:
+            cameraMovedBreakCounter = 5
 
         font = cv2.FONT_HERSHEY_SIMPLEX
         cv2.putText(to_print_frame, f"frame_{i}", (50, 650), font, 1.0, (0, 0, 255), 1, cv2.LINE_AA)
-        cv2.putText(to_print_frame, f"saved: {savedCount}", (500, 650), font, 1.0, (0, 0, 255), 1, cv2.LINE_AA)
+        cv2.putText(to_print_frame, f"saved: {savedCount}", (870, 650), font, 1.0, (0, 0, 255), 1, cv2.LINE_AA)
         cv2.putText(to_print_frame, text, (50, 620), font, 1.0, (0, 0, 255), 1, cv2.LINE_AA)
         cv2.imshow(f"frame", to_print_frame)
 
