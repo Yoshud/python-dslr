@@ -17,6 +17,7 @@ last_frame_raw = capture_frame(camera, context)
 last_frame = to_gray(last_frame_raw)
 last_detection = -1
 cameraMovedBreakCounter = 0
+afterMoveDetectionCounter = 0
 
 savedCount = 0
 i = 0
@@ -35,9 +36,17 @@ try:
             text = "Undefined error"
 
         if cameraMovedBreakCounter == 0:
-            if last_detection == 1 or detection == 1:
+            if detection == 1:
                 cv2.imwrite(f"{directoryName}/frame_{i}.png", frame)
                 savedCount += 1
+                afterMoveDetectionCounter = 2
+            elif detection != 2 and afterMoveDetectionCounter != 0:
+                cv2.imwrite(f"{directoryName}/frame_{i}.png", frame)
+                savedCount += 1
+                afterMoveDetectionCounter -= 1
+            else:
+                afterMoveDetectionCounter = 0
+
             if last_detection == 0 and detection == 1:
                 cv2.imwrite(f"{directoryName}/frame_{i-1}.png", last_frame_raw)
                 savedCount += 1
@@ -46,6 +55,7 @@ try:
 
         if detection == 2:
             cameraMovedBreakCounter = 5
+            afterMoveDetectionCounter = 0
 
         font = cv2.FONT_HERSHEY_SIMPLEX
         cv2.putText(to_print_frame, f"frame_{i}", (50, 650), font, 1.0, (0, 0, 255), 1, cv2.LINE_AA)
