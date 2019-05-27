@@ -58,8 +58,8 @@ try:
             afterMoveDetectionCounter = 0
 
         font = cv2.FONT_HERSHEY_SIMPLEX
-        cv2.putText(to_print_frame, f"frame_{i}", (50, 650), font, 1.0, (0, 0, 255), 1, cv2.LINE_AA)
-        cv2.putText(to_print_frame, f"saved: {savedCount}", (870, 650), font, 1.0, (0, 0, 255), 1, cv2.LINE_AA)
+        cv2.putText(to_print_frame, f"frame_{savedCount}_{i}", (50, 650), font, 1.0, (0, 0, 255), 1, cv2.LINE_AA)
+        cv2.putText(to_print_frame, f"saved: {savedCount}", (800, 650), font, 1.0, (0, 0, 255), 1, cv2.LINE_AA)
         cv2.putText(to_print_frame, text, (50, 620), font, 1.0, (0, 0, 255), 1, cv2.LINE_AA)
         cv2.imshow(f"frame", to_print_frame)
 
