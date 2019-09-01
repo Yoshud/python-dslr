@@ -1,7 +1,7 @@
 import os
 import sys
 import datetime
-from moveDetectionMethod import *
+from move_detection_methods import *
 
 camera, context = init()
 print(sys.argv)
