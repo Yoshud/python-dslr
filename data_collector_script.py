@@ -3,6 +3,9 @@ import sys
 import datetime
 from move_detection_methods import *
 
+FRAMES_OMITTED_AFTER_CAMERA_MOVE_DETECTED = 5
+FRAMES_SAVED_AFTER_LAST_MOVE_DETECTED = 2
+
 camera, context = init()
 print(sys.argv)
 if len(sys.argv) > 1:
@@ -39,7 +42,7 @@ try:
             if detection == 1:
                 cv2.imwrite(f"{directoryName}/frame_{i}.png", frame)
                 savedCount += 1
-                afterMoveDetectionCounter = 2
+                afterMoveDetectionCounter = FRAMES_SAVED_AFTER_LAST_MOVE_DETECTED
             elif detection != 2 and afterMoveDetectionCounter != 0:
                 cv2.imwrite(f"{directoryName}/frame_{i}.png", frame)
                 savedCount += 1
@@ -54,7 +57,7 @@ try:
             cameraMovedBreakCounter -= 1
 
         if detection == 2:
-            cameraMovedBreakCounter = 5
+            cameraMovedBreakCounter = FRAMES_OMITTED_AFTER_CAMERA_MOVE_DETECTED
             afterMoveDetectionCounter = 0
 
         font = cv2.FONT_HERSHEY_SIMPLEX
